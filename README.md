@@ -23,6 +23,8 @@ List clients with no file backup in the last three days:
 
 ```python
 import urbackup_api
+import time
+import datetime
 server = urbackup_api.urbackup_server("http://127.0.0.1:55414/x", "admin", "foo")
 clients = server.get_status()
 diff_time = 3*24*60*60 # 3 days
