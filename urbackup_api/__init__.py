@@ -88,7 +88,7 @@ class urbackup_server:
             else:
                 print("API call failed. Retrying...")
         
-        data = response.readall();
+        data = response.read();
         
         response.close()
             
