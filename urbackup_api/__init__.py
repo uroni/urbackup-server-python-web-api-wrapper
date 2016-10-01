@@ -8,6 +8,9 @@ import socket
 import shutil
 import os
 import binascii
+import logging
+logger = logging.getLogger('urbackup-server-python-api-wrapper')
+
 
 class urbackup_server:
     
@@ -62,7 +65,7 @@ class urbackup_server:
         elif(target.scheme=='https'):
             h = http.HTTPSConnection(target.hostname, target.port, timeout=http_timeout)
         else:
-            print('Unkown scheme: '+target.scheme)
+            logger.error('Unkown scheme: '+target.scheme)
             raise Exception("Unkown scheme: "+target.scheme)
         
         h.request(
@@ -86,7 +89,7 @@ class urbackup_server:
             if(tries==0):
                 return None
             else:
-                print("API call failed. Retrying...")
+                logger.error("API call failed. Retrying...")
         
         data = response.read();
         
@@ -114,18 +117,18 @@ class urbackup_server:
         
         if( not self._logged_in):
             
-            print("Trying anonymous login...")
+            logger.debug("Trying anonymous login...")
             
             login = self._get_json("login", {});
             
             if(not login or 'success' not in login or not login['success']):
                             
-                print("Logging in...")
+                logger.debug("Logging in...")
             
                 salt = self._get_json("salt", {"username": self._server_username})
                 
                 if( not salt or not ('ses' in salt) ):
-                    print('Username does not exist')
+                    logger.warning('Username does not exist')
                     return False
                     
                 self._session = salt["ses"];
@@ -146,7 +149,7 @@ class urbackup_server:
                                                 "password": password_md5 })
                     
                     if(not login or 'success' not in login or not login['success']):
-                        print('Error during login. Password wrong?')
+                        logger.warning('Error during login. Password wrong?')
                         return False
                     
                     else:
@@ -182,7 +185,7 @@ class urbackup_server:
                 
                 return client;
             
-        print("Could not find client status. No permission?")
+        logger.warning("Could not find client status. No permission?")
         return None
     
     def download_installer(self, installer_fn, new_clientname):
