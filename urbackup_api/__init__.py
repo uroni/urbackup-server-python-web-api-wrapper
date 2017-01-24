@@ -92,7 +92,7 @@ class urbackup_server:
                 logger.error("API call failed. Retrying...")
         
         data = response.read();
-        
+        data = data.decode('utf-8','ignore').encode('utf-8')
         response.close()
             
         return json.loads(data.decode("utf-8"))
