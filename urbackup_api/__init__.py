@@ -339,6 +339,20 @@ class urbackup_server:
         
         return status["status"]
     
+    def get_usage(self):
+        if not self.login():
+            return None
+
+        usage = self._get_json("usage")
+
+        if not usage:
+            return None
+
+        if not "usage" in usage:
+            return None
+
+        return usage["usage"]
+
     def get_extra_clients(self):
         if not self.login():
             return None
