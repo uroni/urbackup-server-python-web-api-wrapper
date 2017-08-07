@@ -40,6 +40,9 @@ for client in clients:
 #    print("Failed to start file backup")
     
 
+if not server.get_livelog():
+    print("Failed to get livelog contents"
+
 settings = server.get_client_settings("Johnwin7test-PC2")
 
 for key in settings:
