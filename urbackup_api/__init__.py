@@ -28,6 +28,8 @@ class urbackup_server:
     _session=""
     
     _logged_in = False
+
+    _lastlogid = 0
     
     def _get_response(self, action, params, method="POST"):
                 
@@ -339,6 +341,36 @@ class urbackup_server:
         
         return status["status"]
     
+    def get_livelog(self, clientid = 0):
+        if not self.login():
+            return None
+
+        log = self._get_json("livelog", {"clientid": clientid, "lastid": self._lastlogid})
+
+        if not log:
+            return None
+
+        if not "logdata" in log:
+            return None
+
+        self._lastlogid = log["logdata"][-1]['id']
+
+        return log["logdata"]
+      
+    def get_usage(self):
+        if not self.login():
+            return None
+
+        usage = self._get_json("usage")
+
+        if not usage:
+            return None
+
+        if not "usage" in usage:
+            return None
+
+        return usage["usage"]
+
     def get_extra_clients(self):
         if not self.login():
             return None

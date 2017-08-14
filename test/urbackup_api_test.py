@@ -16,6 +16,10 @@ for line in computernames:
         
 
 clients = server.get_status()
+usage = server.get_usage()
+
+if len(clients) != len(usage):
+    print("Failed to retreive usage or status information. Length of both lists is different.")
 
 # Uncomment to format time differently
 # locale.setlocale(locale.LC_TIME, "german")
@@ -39,6 +43,9 @@ for client in clients:
 #else:
 #    print("Failed to start file backup")
     
+
+if not server.get_livelog():
+    print("Failed to get livelog contents"
 
 settings = server.get_client_settings("Johnwin7test-PC2")
 
