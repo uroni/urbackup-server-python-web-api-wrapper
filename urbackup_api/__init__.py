@@ -406,4 +406,45 @@ class urbackup_server:
             return False
         
         return True
+    
+    action_incr_file = 1
+    action_full_file = 2
+    action_incr_image = 3
+    action_full_image = 4
+    action_resumed_incr_file = 5
+    action_resumed_full_file = 6
+    action_file_restore = 8
+    action_image_restore = 9
+    action_client_update = 10
+    action_check_db_integrity = 11
+    action_backup_db = 12
+    action_recalc_stats = 13
+    
+    def get_actions(self):
+        if not self.login():
+            return None
+        
+        ret = self._get_json("progress")
+        
+        if not ret or not "progress" in ret:
+            return None
+        
+        return ret["progress"]
+    
+    def stop_action(self, action):
+        if (not "clientid" in action
+            or not "id" in action):
+            return False
+        
+        if not self.login():
+            return None
+        
+        ret = self._get_json("progress",
+                             {"stop_clientid": action["clientid"],
+                              "stop_id": action["id"]})
+        
+        if not ret or not "progress" in ret:
+            return False
+        
+        return True
         
