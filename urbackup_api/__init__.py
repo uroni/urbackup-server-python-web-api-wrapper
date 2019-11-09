@@ -187,7 +187,11 @@ class urbackup_server:
         logger.warning('Could not find client status. No permission?')
         return None
 
-    def download_installer(self, installer_fn, new_clientname):
+    def download_installer(self, installer_fn, new_clientname, os='linux'):
+        """Download installer for os, defaults to linux"""
+        
+        if not os.lower() in ['linux', 'osx', 'mac', 'windows']:
+            raise Exception('OS not supported')
 
         if not self.login():
             return False
@@ -201,17 +205,18 @@ class urbackup_server:
             if status == None:
                 return False
 
-            return self._download_file('download_client', installer_fn,
-                                 {'clientid': status['id'] })
+            return self._download_file('download_client', installer_fn, {'clientid': status['id'] })
 
 
         if not 'new_authkey' in new_client:
             return False
 
         return self._download_file('download_client', installer_fn,
-                             {'clientid': new_client['new_clientid'],
-                              'authkey': new_client['new_authkey']
-                              })
+            {
+                'clientid': new_client['new_clientid'],
+                'authkey': new_client['new_authkey'],
+                'os': os
+            })
 
     def add_client(self, clientname):
 
