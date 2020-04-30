@@ -416,6 +416,22 @@ class urbackup_server:
     def start_full_image_backup(self, clientname):
         return self._start_backup(clientname, 'full_image');
     
+    def get_clientimagebackups(self, clientid = 0):
+        if not self.login():
+            return None
+        
+        backups = self._get_json("backups", { "sa": "backups", "clientid": clientid })
+        
+        return backups["backup_images"]
+    
+    def get_clientbackups(self, clientid = 0):
+        if not self.login():
+            return None
+        
+        backups = self._get_json("backups", { "sa": "backups", "clientid": clientid })
+        
+        return backups["backups"]
+    
     def add_extra_client(self, addr):
         if not self.login():
             return None

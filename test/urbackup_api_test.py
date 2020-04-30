@@ -70,3 +70,9 @@ if server.set_global_setting("max_image_incr", "40"):
     print("Changed global setting successfully")
 else:
     print("Failed to change global setting")
+
+#Get all file backups for a specified client id
+backups = server.get_clientbackups('8')
+
+#Get all image backups for a specified client id
+backups_image = server.get_clientimagebackups('8')
