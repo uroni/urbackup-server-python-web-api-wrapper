@@ -1,6 +1,8 @@
 import urbackup_api
+from urbackup_api import installer_os
 import datetime
 import time
+import sys
 
 
 server = urbackup_api.urbackup_server("http://127.0.0.1:55414/x", "admin", "foo")
@@ -45,7 +47,7 @@ for client in clients:
     
 
 if not server.get_livelog():
-    print("Failed to get livelog contents"
+    print("Failed to get livelog contents")
 
 settings = server.get_client_settings("Johnwin7test-PC2")
 
@@ -76,3 +78,6 @@ backups = server.get_clientbackups('8')
 
 #Get all image backups for a specified client id
 backups_image = server.get_clientimagebackups('8')
+
+#Download a client installer
+server.download_installer("test.exe", "test", installer_os.Windows)

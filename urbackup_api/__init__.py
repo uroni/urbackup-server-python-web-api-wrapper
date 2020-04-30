@@ -9,8 +9,12 @@ import shutil
 import os
 import binascii
 import logging
+from enum import Enum
 logger = logging.getLogger('urbackup-server-python-api-wrapper')
 
+class installer_os(Enum):
+        Windows = "windows",
+        Linux = "linux"
 
 class urbackup_server:
     
@@ -101,7 +105,7 @@ class urbackup_server:
     
     def _download_file(self, action, outputfn, params):
         
-        response = self.get_response(action, params, "GET");
+        response = self._get_response(action, params, "GET");
         
         if(response.status!=200):
             return False
@@ -190,13 +194,12 @@ class urbackup_server:
         logger.warning("Could not find client status. No permission?")
         return None
     
-    def download_installer(self, installer_fn, new_clientname):
+    def download_installer(self, installer_fn, new_clientname, e_installer_os):
         
         if not self.login():
             return False
-        
-        new_client = self._get_json("add_client", { "clientname": new_clientname})
-        
+            
+        new_client = self._get_json("add_client", { "clientname": new_clientname })
         if "already_exists" in new_client:
             
             status = self.get_client_status(new_clientname)
@@ -205,7 +208,8 @@ class urbackup_server:
                 return False
             
             return self._download_file("download_client", installer_fn,
-                                 {"clientid": status["id"] })
+                                 {"clientid": status["id"],
+                                  "os": e_installer_os.value})
         
         
         if not "new_authkey" in new_client:     
@@ -213,7 +217,8 @@ class urbackup_server:
         
         return self._download_file("download_client", installer_fn,
                              {"clientid": new_client["new_clientid"],
-                              "authkey": new_client["new_authkey"]
+                              "authkey": new_client["new_authkey"],
+                              "os": e_installer_os.value
                               })
                 
     def add_client(self, clientname):
