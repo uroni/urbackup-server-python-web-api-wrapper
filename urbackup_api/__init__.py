@@ -432,6 +432,22 @@ class urbackup_server:
         
         return backups["backups"]
     
+    def get_groups(self):
+        if not self.login():
+            return None
+        
+        settings = self._get_json("settings")
+        
+        return settings["navitems"]["groups"]
+    
+    def get_clients_with_group(self):
+        if not self.login():
+            return None
+        
+        settings = self._get_json("settings")
+        
+        return settings["navitems"]["clients"]
+    
     def add_extra_client(self, addr):
         if not self.login():
             return None
