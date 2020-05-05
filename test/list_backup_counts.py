@@ -14,9 +14,9 @@ for client in clients:
     for file_backup in file_backups:
         
         if file_backup["incremental"]>0:
-            full_file+=1
-        else:
             incr_file+=1
+        else:
+            full_file+=1
             
     incr_image = 0
     full_image = 0
@@ -29,9 +29,9 @@ for client in clients:
             continue 
         
         if image_backup["incremental"]>0:
-            full_image+=1
-        else:
             incr_image+=1
+        else:
+            full_image+=1
             
     print("Client {clientname} in group {groupname} has {incr_file} incr file backups, {full_file} "
           "full file backups, {incr_image} incr image backups and "
