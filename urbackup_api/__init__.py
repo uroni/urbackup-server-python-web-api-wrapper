@@ -447,6 +447,19 @@ class urbackup_server:
         backups = self._get_json("backups", { "sa": "backups", "clientid": clientid })
         
         return backups["backups"]
+
+    def get_backup_content(self, clientid, backupid, path = "/"):
+        if not self.login():
+            return None
+
+        content = self._get_json("backups", {
+            "sa": "files",
+            "clientid": clientid,
+            "backupid": backupid,
+            "path": path
+        })
+
+        return content["files"]
     
     def get_groups(self):
         if not self.login():
