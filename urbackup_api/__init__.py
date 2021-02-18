@@ -473,9 +473,7 @@ class urbackup_server:
 
         if response.status != 200:
             return None
-        data = response.read()
-        response.close()
-        return data
+        return response.read()
 
     def get_groups(self):
         if not self.login():
