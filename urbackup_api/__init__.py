@@ -460,6 +460,22 @@ class urbackup_server:
 
         return content["files"]
 
+    def download_backup_file(self, clientid, backupid, path="/"):
+        if not self.login():
+            return None
+
+        response = self._get_response("backups", {
+            "sa": "filesdl",
+            "clientid": clientid,
+            "backupid": backupid,
+            "path": path
+        }, "GET")
+
+        if response.status != 200:
+            return None
+
+        return response
+
     def get_groups(self):
         if not self.login():
             return None
