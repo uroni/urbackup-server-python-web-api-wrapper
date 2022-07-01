@@ -4,9 +4,7 @@ from urllib.parse import urlparse
 from urllib.parse import urlencode
 from base64 import b64encode
 import hashlib
-import socket
 import shutil
-import os
 import binascii
 import logging
 from enum import Enum
@@ -220,12 +218,15 @@ class urbackup_server:
                                     "os": e_installer_os.value
                                     })
 
-    def add_client(self, clientname):
-
+    def add_client(self, clientname, groupname=None):
         if not self.login():
             return None
 
-        ret = self._get_json("add_client", {"clientname": clientname})
+        data = {"clientname": clientname}
+        if groupname is not None:
+            data['group_name'] = groupname
+
+        ret = self._get_json("add_client", data)
         if ret == None or "already_exists" in ret:
             return None
 

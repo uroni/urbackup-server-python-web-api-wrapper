@@ -1,3 +1,6 @@
 urbackup_server_web_api_wrapper.egg-info/*
 dist/urbackup-server-web-api-wrapper-*.zip
 urbackup_api/__pycache__/*
+
+# IDE
+.idea
