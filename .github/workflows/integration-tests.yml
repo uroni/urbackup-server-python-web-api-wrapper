@@ -25,8 +25,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y urbackup-server
 
+      - name: Verify urbackup-server installation
+        run: |
+          dpkg -l | grep urbackup || true
+          which urbackupsrv || true
+          sudo systemctl list-unit-files | grep urbackup || true
+          cat /lib/systemd/system/urbackupsrv.service || true
+
       - name: Start urbackup-server
-        run: sudo systemctl start urbackupsrv
+        run: |
+          sudo systemctl start urbackupsrv || {
+            echo "=== systemctl status ==="
+            sudo systemctl status urbackupsrv --no-pager || true
+            echo "=== journalctl ==="
+            sudo journalctl -xeu urbackupsrv --no-pager -n 50 || true
+            exit 1
+          }
+          sudo systemctl status urbackupsrv --no-pager
 
       - name: Install Python dependencies
         run: |

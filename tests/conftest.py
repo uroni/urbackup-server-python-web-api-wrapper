@@ -11,13 +11,24 @@ ADMIN_USER = "admin"
 ADMIN_PASSWORD = "test1234"
 
 
+def _run(cmd):
+    """Run a command, capturing output and raising with details on failure."""
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Command {cmd!r} failed (rc={result.returncode})\n"
+            f"stdout: {result.stdout}\nstderr: {result.stderr}"
+        )
+    return result
+
+
 def _restart_clean_server():
     """Stop urbackupsrv, wipe /var/urbackup/, start fresh."""
-    subprocess.run(["sudo", "systemctl", "stop", "urbackupsrv"], check=True)
-    subprocess.run(["sudo", "rm", "-rf", "/var/urbackup/"], check=True)
-    subprocess.run(["sudo", "mkdir", "-p", "/var/urbackup/"], check=True)
-    subprocess.run(["sudo", "chown", "urbackup:urbackup", "/var/urbackup/"], check=True)
-    subprocess.run(["sudo", "systemctl", "start", "urbackupsrv"], check=True)
+    _run(["sudo", "systemctl", "stop", "urbackupsrv"])
+    _run(["sudo", "rm", "-rf", "/var/urbackup/"])
+    _run(["sudo", "mkdir", "-p", "/var/urbackup/"])
+    _run(["sudo", "chown", "urbackup:urbackup", "/var/urbackup/"])
+    _run(["sudo", "systemctl", "start", "urbackupsrv"])
     # Wait for the server to be ready
     for _ in range(30):
         try:
