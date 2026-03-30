@@ -5,3 +5,4 @@ urbackup_api/__pycache__/*
 # IDE
 .idea
 tests/__pycache__
+test/__pycache__
