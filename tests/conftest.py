@@ -38,6 +38,8 @@ def _restart_clean_server():
     """Stop urbackupsrv, wipe /var/urbackup/, start fresh."""
     subprocess.run(["sudo", "systemctl", "stop", "urbackupsrv"],
                     capture_output=True)  # ignore errors on stop
+    subprocess.run(["sudo", "systemctl", "reset-failed", "urbackupsrv"],
+                    capture_output=True)  # clear start-limit-hit counter
     _run(["sudo", "rm", "-rf", "/var/urbackup/"])
     _run(["sudo", "mkdir", "-p", "/var/urbackup/"])
     _run(["sudo", "chown", "urbackup:urbackup", "/var/urbackup/"])
