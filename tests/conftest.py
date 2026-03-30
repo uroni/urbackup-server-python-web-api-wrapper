@@ -15,16 +15,29 @@ def _run(cmd):
     """Run a command, capturing output and raising with details on failure."""
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
-        raise RuntimeError(
-            f"Command {cmd!r} failed (rc={result.returncode})\n"
-            f"stdout: {result.stdout}\nstderr: {result.stderr}"
-        )
+        diag = f"Command {cmd!r} failed (rc={result.returncode})\n"
+        diag += f"stdout: {result.stdout}\nstderr: {result.stderr}\n"
+        # Gather extra diagnostics for service failures
+        for diag_cmd in [
+            ["sudo", "systemctl", "status", "urbackupsrv", "--no-pager"],
+            ["sudo", "journalctl", "-xeu", "urbackupsrv", "--no-pager", "-n", "100"],
+            ["ls", "-la", "/var/urbackup/"],
+            ["id", "urbackup"],
+        ]:
+            try:
+                d = subprocess.run(diag_cmd, capture_output=True, text=True)
+                diag += f"\n=== {' '.join(diag_cmd)} (rc={d.returncode}) ===\n"
+                diag += d.stdout + d.stderr
+            except Exception as e:
+                diag += f"\n=== {' '.join(diag_cmd)} FAILED: {e} ===\n"
+        raise RuntimeError(diag)
     return result
 
 
 def _restart_clean_server():
     """Stop urbackupsrv, wipe /var/urbackup/, start fresh."""
-    _run(["sudo", "systemctl", "stop", "urbackupsrv"])
+    subprocess.run(["sudo", "systemctl", "stop", "urbackupsrv"],
+                    capture_output=True)  # ignore errors on stop
     _run(["sudo", "rm", "-rf", "/var/urbackup/"])
     _run(["sudo", "mkdir", "-p", "/var/urbackup/"])
     _run(["sudo", "chown", "urbackup:urbackup", "/var/urbackup/"])
