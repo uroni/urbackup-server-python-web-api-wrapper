@@ -94,11 +94,15 @@ server.save_general_settings({"max_file_incr": "15"})
 
 # Client settings (by ID)
 client_settings = server.get_client_settings_by_id(client.id)
-server.save_client_settings_by_id(client.id, {"internet_authkey": "mykey", "overwrite": "true"})
 
-# Mail / LDAP
+# Configure client to backup folder C:\foo as name foo
+server.save_client_settings_by_id(client.id, {"default_dirs": "C:\\foo|foo"})
+
+# Configure incremental backup interval to 4h
+server.save_client_settings_by_id(client.id, {"update_freq_incr": 4 * 60*60})
+
+# Mail
 server.save_mail_settings({"mail_servername": "smtp.example.com", "mail_serverport": "587"})
-ldap = server.get_ldap_settings()
 ```
 
 ### User management
